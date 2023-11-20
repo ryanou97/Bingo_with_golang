@@ -59,6 +59,21 @@ func main() {
 
 func initializeBoard() [][]int {
 	board := make([][]int, boardSize)
+	numbers := rand.Perm(maxNumber) // 隨機洗牌0~24
+
+	for i := 0; i < boardSize; i++ {
+		board[i] = numbers[i*boardSize : (i+1)*boardSize]
+		for j := range board[i] {
+			board[i][j]++ // 將每個數字加1，以滿足1~25的範圍
+		}
+	}
+
+	return board
+}
+
+/* 原 0~24
+func initializeBoard() [][]int {
+	board := make([][]int, boardSize)
 	numbers := rand.Perm(maxNumber) // 隨機洗牌1~25
 
 	for i := 0; i < boardSize; i++ {
@@ -66,7 +81,7 @@ func initializeBoard() [][]int {
 	}
 
 	return board
-}
+} */
 
 func printBoard(board [][]int) {
 	for _, row := range board {
