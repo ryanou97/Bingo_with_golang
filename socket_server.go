@@ -12,7 +12,9 @@ func handleConnection(conn net.Conn) {
 	for {
 		// 讀取客戶端發送的資料
 		n, err := conn.Read(buffer)
+
 		if err != nil {
+			// 加入這段，可以防止client斷線後print出 "Error reading: EOF"
 			if err.Error() == "EOF" {
 				fmt.Println("Client closed the connection")
 				return
