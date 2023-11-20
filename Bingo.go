@@ -92,23 +92,25 @@ func printBoard(board [][]int) {
 	}
 }
 
-/* 選擇號碼不會修改的問題
-func playerMove(player *Player) {
-	var selectedNumber int
-	fmt.Print(player.name, ", choose a number: ")
-	fmt.Scan(&selectedNumber)
+/*
+選擇號碼不會修改的問題
 
-	// 檢查號碼的有效性
-	if selectedNumber < 1 || selectedNumber > maxNumber || player.selected[selectedNumber] {
-		fmt.Println("Invalid choice. Try again.")
-		playerMove(player)
-		return
+	func playerMove(player *Player) {
+		var selectedNumber int
+		fmt.Print(player.name, ", choose a number: ")
+		fmt.Scan(&selectedNumber)
+
+		// 檢查號碼的有效性
+		if selectedNumber < 1 || selectedNumber > maxNumber || player.selected[selectedNumber] {
+			fmt.Println("Invalid choice. Try again.")
+			playerMove(player)
+			return
+		}
+
+		// 標記號碼為已選擇
+		player.selected[selectedNumber] = true
 	}
-
-	// 標記號碼為已選擇
-	player.selected[selectedNumber] = true
-}*/
-
+*/
 func playerMove(player *Player, board [][]int) {
 	var selectedNumber int
 	fmt.Print(player.name, ", choose a number: ")
@@ -127,7 +129,7 @@ func playerMove(player *Player, board [][]int) {
 	// 更新Bingo板
 	for i := range board {
 		for j := range board[i] {
-			if board[i][j] == selectedNumber {
+			if board[i][j] == selectedNumber && selectedNumber != 0 {
 				board[i][j] = 0
 			}
 		}
@@ -135,27 +137,49 @@ func playerMove(player *Player, board [][]int) {
 }
 
 func isWinner(selected map[int]bool) bool {
-	// 檢查行
+	// 檢查橫線
 	for i := 0; i < boardSize; i++ {
-		if selected[i*boardSize] && selected[i*boardSize+1] && selected[i*boardSize+2] && selected[i*boardSize+3] && selected[i*boardSize+4] {
+		win := true
+		for j := 0; j < boardSize; j++ {
+			if !selected[i*boardSize+j] {
+				win = false
+				break
+			}
+		}
+		if win {
 			return true
 		}
 	}
 
-	// 檢查列
+	// 檢查豎線
 	for i := 0; i < boardSize; i++ {
-		if selected[i] && selected[i+boardSize] && selected[i+2*boardSize] && selected[i+3*boardSize] && selected[i+4*boardSize] {
+		win := true
+		for j := 0; j < boardSize; j++ {
+			if !selected[j*boardSize+i] {
+				win = false
+				break
+			}
+		}
+		if win {
 			return true
 		}
 	}
 
 	// 檢查對角線
-	if selected[0] && selected[6] && selected[12] && selected[18] && selected[24] {
-		return true
+	diagonal1 := true
+	diagonal2 := true
+	for i := 0; i < boardSize; i++ {
+		if !selected[i*boardSize+i] {
+			diagonal1 = false
+			break
+		}
 	}
-	if selected[4] && selected[8] && selected[12] && selected[16] && selected[20] {
-		return true
+	for i := 0; i < boardSize; i++ {
+		if !selected[i*boardSize+(boardSize-i-1)] {
+			diagonal2 = false
+			break
+		}
 	}
 
-	return false
+	return diagonal1 || diagonal2
 }
