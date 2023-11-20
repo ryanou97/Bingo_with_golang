@@ -33,7 +33,7 @@ func main() {
 		fmt.Println("-----------------------")
 
 		// 玩家1選擇號碼
-		playerMove(&player1)
+		playerMove(&player1, board)
 
 		// 檢查玩家1是否連成一條線
 		if isWinner(player1.selected) {
@@ -42,7 +42,7 @@ func main() {
 		}
 
 		// 玩家2選擇號碼
-		playerMove(&player2)
+		playerMove(&player2, board)
 
 		// 檢查玩家2是否連成一條線
 		if isWinner(player2.selected) {
@@ -92,6 +92,7 @@ func printBoard(board [][]int) {
 	}
 }
 
+/* 選擇號碼不會修改的問題
 func playerMove(player *Player) {
 	var selectedNumber int
 	fmt.Print(player.name, ", choose a number: ")
@@ -106,6 +107,31 @@ func playerMove(player *Player) {
 
 	// 標記號碼為已選擇
 	player.selected[selectedNumber] = true
+}*/
+
+func playerMove(player *Player, board [][]int) {
+	var selectedNumber int
+	fmt.Print(player.name, ", choose a number: ")
+	fmt.Scan(&selectedNumber)
+
+	// 檢查號碼的有效性
+	if selectedNumber < 1 || selectedNumber > maxNumber || player.selected[selectedNumber] {
+		fmt.Println("Invalid choice. Try again.")
+		playerMove(player, board)
+		return
+	}
+
+	// 標記號碼為已選擇
+	player.selected[selectedNumber] = true
+
+	// 更新Bingo板
+	for i := range board {
+		for j := range board[i] {
+			if board[i][j] == selectedNumber {
+				board[i][j] = 0
+			}
+		}
+	}
 }
 
 func isWinner(selected map[int]bool) bool {
